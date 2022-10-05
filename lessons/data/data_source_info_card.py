@@ -1,3 +1,6 @@
+from re import search
+
+
 class DataSourceInfoCard:
 
     def __init__(self, message):
@@ -25,3 +28,17 @@ class DataSourceInfoCard:
               f"</script>"
         msg = msg.replace("rPrior", "rFinal")
         return msg
+
+    def get_balance_card(self):
+        if '<currency name="RUB"  comment="Российский рубль"  value="' in self.message:
+            msg = self.message.partition('<currency name="RUB"  comment="Российский рубль"  value="')[2]
+            msg = msg.partition('"')[0]
+            msg = msg[:-1]
+            return f"{msg} руб."
+        else:
+            return "Баланса нет"
+
+    def get_balance_package(self):
+        msg = self.message.partition(',Остаток=')[2]
+        msg = msg.partition(',')[0]
+        return f"Осталось {msg} занятий"

@@ -1,10 +1,10 @@
 from django.shortcuts import render
 import requests
-
 from lessons.data.data_source_info_card import DataSourceInfoCard
 from lessons.services import KonturMessage
 
-
+# url_info_card = "http://81.200.31.254:33355/spd-xml-api"
+# url_passage_card = "http://81.200.31.254:33355/monitor?script=True"
 url_info_card = "http://213.208.176.194:55577/spd-xml-api"
 url_passage_card = "http://213.208.176.194:55577/monitor?script=True"
 kontur_message = KonturMessage
@@ -29,9 +29,12 @@ def info_card(request):
     message = response.text
     sorted_message = DataSourceInfoCard(message)
     full_name = sorted_message.get_full_name()
+    balance = sorted_message.get_balance_card()
+
     data = {
         "number_card": number_card,
-        "full_name": full_name
+        "full_name": full_name,
+        "balance": balance
     }
 
     return render(request, "lessons/infocard.html", data)
@@ -59,6 +62,9 @@ def passage_card(request):
         solution = msg.partition('<Reason>')[2]
         solution = solution.partition('</Reason>')[0]
 
+        if solution == "Проход разрешен":
+            solution = "Занятие списано"
+
         repeat_passage = requests.post(
             url=url_passage_card,
             data=msg.encode('windows-1251'),
@@ -77,21 +83,14 @@ def passage_card(request):
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
-        lock = lock_device.text
-        pa = passage.text
-        rep = repeat_passage.text
         unlock = unlock_device.text
-        ans = answer_device.text
+        sorted_message = DataSourceInfoCard(unlock)
+        count_lessons = sorted_message.get_balance_package()
 
         data = {
-            "user_prof": user_prof,
             "number_card": number_card,
-            "lock": lock,
-            "msg": msg,
-            "pa": pa,
-            "rep": rep,
-            "unlock": unlock,
-            "ans": ans
+            "solution": solution,
+            "count_lessons": count_lessons,
         }
     else:
         data = {

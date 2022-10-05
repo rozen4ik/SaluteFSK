@@ -7,14 +7,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отметка о занятии</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/tabs.css' %}" type="text/css">
 </head>
 <body>
-    {% if user.is_authenticated %}
+{% if user.is_authenticated %}
     <nav class="navbar navbar-fixed-top-top navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <div class="navbar-collapse" id="navbarScroll">
-                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
+                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти
+                    - {{ user.first_name }} {{ user.last_name }} </a>
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Главная</a>
@@ -25,26 +28,62 @@
     </nav>
     <br>
     <div class="container-fluid">
-        <p>{{ number_card }}</p>
-        <p>{{ user_prof.device_id }}</p>
-        <p>{{ lock }}</p>
-        <p>{{ pa }}</p>
-        <p>{{ msg }}</p>
-        <p>{{ rep }}</p>
-        <p>{{ unlock }}</p>
-        <p>{{ ans }}</p>
-    </div>
-    {% else %}
-        <div class="container-fluid">
+        <p>Номер карты: {{ number_card }}</p>
+        <p>Решение: {{ solution }}</p>
+        <p>{{ count_lessons }}</p>
         <br>
-            <p>Войдите в систему</p>
-            <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
+        <hr>
+        <div class="tabs">
+            <div class="tabs__nav">
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_1">Информация по карте</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_2">Отметка о занятии</button>
+            </div>
+            <div class="tabs__content">
+                <div class="tabs__item" id="tab_1">
+                    <form class="row g-3" method="POST" action="{% url 'identifier' %}" id="tg">
+                        {% csrf_token %}
+                        <div class="col-md-4">
+                            <label for="inputNumberCard" class="form-label">Введите номер карты</label>
+                            <input type="text" class="form-control" id="inputNumberCard" name="number_card">
+                        </div>
+                        <div class="col-12">
+                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button"
+                                   value="Отправить">
+                        </div>
+                    </form>
+                </div>
+                <div class="tabs__item" id="tab_2">
+                    <form class="row g-3" method="POST" action="{% url 'passage' %}" id="tg">
+                        {% csrf_token %}
+                        <div class="col-md-4">
+                            <label for="inputNumberCard" class="form-label">Введите номер карты</label>
+                            <input type="text" class="form-control" id="inputNumberCard" name="number_card">
+                        </div>
+                        <div class="col-12">
+                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button"
+                                   value="Отправить">
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    {% endif %}
-    <br>
-    {% block content %}
-    {% endblock content %}
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+    </div>
+{% else %}
+    <div class="container-fluid">
+        <br>
+        <p>Войдите в систему</p>
+        <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
+    </div>
+{% endif %}
+<br>
+{% block content %}
+{% endblock content %}
+<script src="{% static "js/tabs.js" %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
 </body>
 </html>
