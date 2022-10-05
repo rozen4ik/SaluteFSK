@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import requests
 from lessons.data.data_source_info_card import DataSourceInfoCard
+from lessons.models import Section
 from lessons.services import KonturMessage
 
 # url_info_card = "http://81.200.31.254:33355/spd-xml-api"
@@ -12,11 +13,12 @@ kontur_message = KonturMessage
 
 def index(request):
     if request.user.is_authenticated:
-        user_prof = request.user.profile
+        id_tren = request.user.id
+        sections = Section.objects.filter(trener=id_tren)
         user_fl = request.user
         data = {
-            "user_prof": user_prof,
-            "user_fl": user_fl
+            "user_fl": user_fl,
+            "sections": sections
         }
     else:
         data = {}
@@ -24,35 +26,70 @@ def index(request):
 
 
 def info_card(request):
-    number_card = request.POST.get("number_card")
-    response = requests.post(url=url_info_card, data=kontur_message.message_info_card(number_card))
-    message = response.text
-    sorted_message = DataSourceInfoCard(message)
-    full_name = sorted_message.get_full_name()
-    balance = sorted_message.get_balance_card()
+    if request.user.is_authenticated:
+        id_tren = request.user.id
+        sections = Section.objects.filter(trener=id_tren)
 
-    data = {
-        "number_card": number_card,
-        "full_name": full_name,
-        "balance": balance
-    }
+        number_card = request.POST.get("number_card")
+        response = requests.post(url=url_info_card, data=kontur_message.message_info_card(number_card))
+        message = response.text
+        sorted_message = DataSourceInfoCard(message)
+        full_name = sorted_message.get_full_name()
+        balance = sorted_message.get_balance_card()
+        list_package = sorted_message.get_list_package()
+        # list_package = list_package.split('/>')
+        len_list_package = len(list_package)-1
+        pack = []
 
+        for p in list_package:
+            id_pak = ""
+            rule_use = ""
+            use_count = ""
+            used_count = ""
+            if p == "id=\"":
+
+                id_pak = p
+            if p == "rule_use=\"":
+
+                rule_use = p
+            if p == "use_count=\"":
+
+                use_count = p
+            if p == "used_count=\"":
+
+                used_count = p
+            if (id_pak != "") and (rule_use != "") and (use_count != "") and (used_count != ""):
+                pack += (id_pak, rule_use, use_count, used_count)
+
+        data = {
+            "number_card": number_card,
+            "full_name": full_name,
+            "balance": balance,
+            "list_package": list_package,
+            "len_list_package": len_list_package,
+            "sections": sections,
+            "pack": pack
+        }
+    else:
+        data = {}
     return render(request, "lessons/infocard.html", data)
 
 
 def passage_card(request):
     number_card = request.POST.get("number_card")
+    device_id = request.POST.get("device_id")
     if request.user.is_authenticated:
-        user_prof = request.user.profile
+        id_tren = request.user.id
+        sections = Section.objects.filter(trener=id_tren)
         lock_device = requests.post(
             url=url_passage_card,
-            data=kontur_message.message_block_device(user_prof.device_id).encode('windows-1251'),
+            data=kontur_message.message_block_device(device_id).encode('windows-1251'),
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
         passage = requests.post(
             url=url_passage_card,
-            data=kontur_message.message_passage_card(user_prof.device_id, number_card).encode('windows-1251'),
+            data=kontur_message.message_passage_card(device_id, number_card).encode('windows-1251'),
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
@@ -64,6 +101,8 @@ def passage_card(request):
 
         if solution == "Проход разрешен":
             solution = "Занятие списано"
+        else:
+            solution = "Нет допуска к занятиям"
 
         repeat_passage = requests.post(
             url=url_passage_card,
@@ -73,13 +112,13 @@ def passage_card(request):
 
         unlock_device = requests.post(
             url=url_passage_card,
-            data=kontur_message.message_unblock_device(user_prof.device_id).encode('windows-1251'),
+            data=kontur_message.message_unblock_device(device_id).encode('windows-1251'),
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
         answer_device = requests.post(
             url=url_passage_card,
-            data=kontur_message.answer_device(user_prof.device_id).encode('windows-1251'),
+            data=kontur_message.answer_device(device_id).encode('windows-1251'),
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
@@ -91,6 +130,7 @@ def passage_card(request):
             "number_card": number_card,
             "solution": solution,
             "count_lessons": count_lessons,
+            "sections": sections
         }
     else:
         data = {

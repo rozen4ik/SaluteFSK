@@ -28,9 +28,9 @@
     </nav>
     <br>
     <div class="container-fluid">
-        <p>Номер карты: {{ number_card }}</p>
-        <p>Решение: {{ solution }}</p>
-        <p>{{ count_lessons }}</p>
+        <p><b>Номер карты: {{ number_card }}</b></p>
+        <p><b>Решение: {{ solution }}</b></p>
+        <p><b>{{ count_lessons }}</b></p>
         <br>
         <hr>
         <div class="tabs">
@@ -55,6 +55,18 @@
                 <div class="tabs__item" id="tab_2">
                     <form class="row g-3" method="POST" action="{% url 'passage' %}" id="tg">
                         {% csrf_token %}
+                        <div class="col-md-4">
+                            <label for="inputSections" class="form-label">Выбрать секцию:</label>
+                            <select class="form-select" id="inputSections" name="device_id">
+                                {% for sec in sections %}
+                                    <option value="{{ sec.device_id }}">{{ sec.section_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            {#                            <label for="inputNumberCard" class="form-label">Введите номер карты</label>#}
+                            {#                            <input type="text" class="form-control" id="inputNumberCard" name="number_card">#}
+                        </div>
                         <div class="col-md-4">
                             <label for="inputNumberCard" class="form-label">Введите номер карты</label>
                             <input type="text" class="form-control" id="inputNumberCard" name="number_card">

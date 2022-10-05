@@ -9,6 +9,12 @@ class DataSourceInfoCard:
     def get_message(self):
         return self.message
 
+    def get_list_package(self):
+        msg = self.message.partition('<package')[2]
+        msg = f"<package {msg}"
+        msg = msg.partition('</identifier>')[0]
+        return msg
+
     def get_full_name(self):
         f_name = self.message.partition('<attribute name="fname"  comment="Имя"  value="')[2]
         f_name = f_name.partition('"')[0]

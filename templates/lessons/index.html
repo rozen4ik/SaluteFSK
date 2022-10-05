@@ -29,7 +29,6 @@
     <br>
     <div class="container-fluid">
         <h1>{{ user_fl.first_name }} {{ user_fl.last_name }}</h1>
-        <h3>Тренер: {{ user_prof.device_id }}</h3>
         <br>
         <div class="tabs">
             <div class="tabs__nav">
@@ -38,7 +37,7 @@
             </div>
             <div class="tabs__content">
                 <div class="tabs__item" id="tab_1">
-                    <form class="row g-3" method="POST" action="identifier/" id="tg">
+                    <form class="row g-3" method="POST" action="{% url 'identifier' %}" id="tg">
                         {% csrf_token %}
                         <div class="col-md-4">
                             <label for="inputNumberCard" class="form-label">Введите номер карты</label>
@@ -51,8 +50,20 @@
                     </form>
                 </div>
                 <div class="tabs__item" id="tab_2">
-                    <form class="row g-3" method="POST" action="passage/" id="tg">
+                    <form class="row g-3" method="POST" action="{% url 'passage' %}" id="tg">
                         {% csrf_token %}
+                        <div class="col-md-4">
+                            <label for="inputSections" class="form-label">Выбрать секцию:</label>
+                            <select class="form-select" id="inputSections" name="device_id">
+                                {% for sec in sections %}
+                                    <option value="{{ sec.device_id }}">{{ sec.section_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            {#                            <label for="inputNumberCard" class="form-label">Введите номер карты</label>#}
+                            {#                            <input type="text" class="form-control" id="inputNumberCard" name="number_card">#}
+                        </div>
                         <div class="col-md-4">
                             <label for="inputNumberCard" class="form-label">Введите номер карты</label>
                             <input type="text" class="form-control" id="inputNumberCard" name="number_card">
