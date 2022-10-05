@@ -29,46 +29,18 @@ def info_card(request):
     if request.user.is_authenticated:
         id_tren = request.user.id
         sections = Section.objects.filter(trener=id_tren)
-
         number_card = request.POST.get("number_card")
         response = requests.post(url=url_info_card, data=kontur_message.message_info_card(number_card))
         message = response.text
         sorted_message = DataSourceInfoCard(message)
         full_name = sorted_message.get_full_name()
         balance = sorted_message.get_balance_card()
-        list_package = sorted_message.get_list_package()
-        # list_package = list_package.split('/>')
-        len_list_package = len(list_package)-1
-        pack = []
-
-        for p in list_package:
-            id_pak = ""
-            rule_use = ""
-            use_count = ""
-            used_count = ""
-            if p == "id=\"":
-
-                id_pak = p
-            if p == "rule_use=\"":
-
-                rule_use = p
-            if p == "use_count=\"":
-
-                use_count = p
-            if p == "used_count=\"":
-
-                used_count = p
-            if (id_pak != "") and (rule_use != "") and (use_count != "") and (used_count != ""):
-                pack += (id_pak, rule_use, use_count, used_count)
 
         data = {
             "number_card": number_card,
             "full_name": full_name,
             "balance": balance,
-            "list_package": list_package,
-            "len_list_package": len_list_package,
-            "sections": sections,
-            "pack": pack
+            "sections": sections
         }
     else:
         data = {}
