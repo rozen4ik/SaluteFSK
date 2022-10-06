@@ -35,12 +35,31 @@ def info_card(request):
         sorted_message = DataSourceInfoCard(message)
         full_name = sorted_message.get_full_name()
         balance = sorted_message.get_balance_card()
+        list_package = sorted_message.get_list_package()
+        list_id_package = []
+        list_rule_use = []
+        list_use_count = []
+        list_used_count = []
+
+        for i in list_package.split(" "):
+            if not i.find('id="'):
+                list_id_package.append(i)
+            if not i.find('rule_use="'):
+                list_rule_use.append(i)
+            if not i.find('use_count="'):
+                list_use_count.append(i)
+            if not i.find('used_count="'):
+                list_used_count.append(i)
 
         data = {
             "number_card": number_card,
             "full_name": full_name,
             "balance": balance,
-            "sections": sections
+            "sections": sections,
+            "list_id_package": list_id_package,
+            "list_rule_use": list_rule_use,
+            "list_use_count": list_use_count,
+            "list_used_count": list_used_count
         }
     else:
         data = {}
