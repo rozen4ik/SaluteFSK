@@ -12,8 +12,33 @@ class DataSourceInfoCard:
     def get_list_package(self):
         msg = self.message.partition('<package')[2]
         msg = f"<package {msg}"
-        msg = msg.partition('</identifier>')[0]
-        return msg
+        list_package = msg.partition('</identifier>')[0]
+
+        list_rule_use = []
+        list_use_count = []
+        list_used_count = []
+
+        for i in list_package.split('" '):
+            msg = i.partition('description="')[2]
+            list_rule_use.append(msg)
+            msg = i.partition('use_count="')[2]
+            list_use_count.append(msg)
+            msg = i.partition('used_count="')[2]
+            list_used_count.append(msg)
+
+        list_rule_use = [e for e in list_rule_use if e]
+        list_use_count = [e for e in list_use_count if e]
+        list_used_count = [e for e in list_used_count if e]
+
+        size_package = len(list_used_count)
+        packages = []
+        b = 0
+
+        while b < size_package:
+            packages.append(f"Услуга: {list_rule_use[b]}, Всего занятий: {list_use_count[b]}, Посещено занятий: {list_used_count[b]}")
+            b += 1
+
+        return packages
 
     def get_full_name(self):
         f_name = self.message.partition('<attribute name="fname"  comment="Имя"  value="')[2]
