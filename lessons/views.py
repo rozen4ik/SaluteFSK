@@ -96,14 +96,17 @@ def passage_card(request):
             headers={'Content-Type': 'application/xml', 'charset': 'windows-1251'}
         )
 
-        unlock = unlock_device.text
-        sorted_message = DataSourceInfoCard(unlock)
-        count_lessons = sorted_message.get_balance_package()
+        response = requests.post(url=url_info_card, data=kontur_message.message_info_card(number_card))
+        message = response.text
+        sorted_message = DataSourceInfoCard(message)
+        balance = sorted_message.get_balance_card()
+        packages = sorted_message.get_list_package()
 
         data = {
             "number_card": number_card,
             "solution": solution,
-            "count_lessons": count_lessons,
+            "balance": balance,
+            "packages": packages,
             "sections": sections
         }
     else:

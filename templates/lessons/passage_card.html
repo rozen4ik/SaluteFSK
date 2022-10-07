@@ -30,7 +30,16 @@
     <div class="container-fluid">
         <p><b>Номер карты: {{ number_card }}</b></p>
         <p><b>Решение: {{ solution }}</b></p>
-        <p><b>{{ count_lessons }}</b></p>
+        <p><b>Баланс: {{ balance }}</b></p>
+        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+            <tbody>
+            {% for p in packages %}
+                <tr>
+                    <td><b>{{ p }}</b></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         <br>
         <hr>
         <div class="tabs">

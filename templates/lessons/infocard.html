@@ -31,18 +31,15 @@
         <p><b>Номер карты: {{ number_card }}</b></p>
         <p><b>ФИО клиента: {{ full_name }}</b></p>
         <p><b>Баланс: {{ balance }}</b></p>
-
-            <p><b>{{ p }}</b></p>
-
-                <table id="tag" class="table table-bordered table-sm align-middle table-hover">
-                    <tbody>
-                    {% for p in packages %}
-                        <tr>
-                            <td><b>{{ p }}</b></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-            </table>
+        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+            <tbody>
+            {% for p in packages %}
+                <tr>
+                    <td><b>{{ p }}</b></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         <br>
         <hr>
         <div class="tabs">
